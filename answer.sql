@@ -1,25 +1,32 @@
--- 1. Retrieve checkNumber, paymentDate, and amount from the payments table
-SELECT checkNumber, paymentDate, amount
-FROM payments;
+-- Library Management System
 
--- 2. Retrieve orderDate, requiredDate, and status of 'In Process' orders, sorted by orderDate descending
-SELECT orderDate, requiredDate, status
-FROM orders
-WHERE status = 'In Process'
-ORDER BY orderDate DESC;
+-- Drop tables if they already exist
+DROP TABLE IF EXISTS BookLoans, Books, Members;
 
--- 3. Display firstName, lastName, and email of 'Sales Rep' employees, ordered by employeeNumber descending
-SELECT firstName, lastName, email
-FROM employees
-WHERE jobTitle = 'Sales Rep'
-ORDER BY employeeNumber DESC;
+-- Create Members Table
+CREATE TABLE Members (
+    member_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    join_date DATE NOT NULL
+);
 
--- 4. Retrieve all columns and records from the offices table
-SELECT *
-FROM offices;
+-- Create Books Table
+CREATE TABLE Books (
+    book_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(100),
+    isbn VARCHAR(20) UNIQUE,
+    available_copies INT NOT NULL CHECK (available_copies >= 0)
+);
 
--- 5. Fetch productName and quantityInStock, sort by buyPrice ascending, limit to 5 records
-SELECT productName, quantityInStock
-FROM products
-ORDER BY buyPrice ASC
-LIMIT 5;
+-- Create BookLoans Table (Many-to-Many)
+CREATE TABLE BookLoans (
+    loan_id INT PRIMARY KEY AUTO_INCREMENT,
+    member_id INT,
+    book_id INT,
+    loan_date DATE,
+    return_date DATE,
+    FOREIGN KEY (member_id) REFERENCES Members(member_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+);
